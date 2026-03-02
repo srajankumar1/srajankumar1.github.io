@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Srajan | AI/ML Portfolio</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+/* ---------- GLOBAL ---------- */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+scroll-behavior:smooth;
+}
+
+body{
+background:linear-gradient(135deg,#0d1117,#020617);
+color:#e6edf3;
+}
+
+/* ---------- NAVBAR ---------- */
+nav{
+position:fixed;
+width:100%;
+background:rgba(22,27,34,0.65);
+backdrop-filter:blur(12px);
+padding:15px 8%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+z-index:1000;
+}
+
+nav a{
+margin-left:20px;
+color:#e6edf3;
+text-decoration:none;
+font-weight:500;
+}
+
+/* ---------- HERO ---------- */
+.hero{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+padding:20px;
+}
+
+.hero h1{
+font-size:48px;
+}
+
+.typing{
+color:#58a6ff;
+margin-top:10px;
+}
+
+.btn{
+margin-top:25px;
+padding:12px 24px;
+background:#238636;
+border:none;
+border-radius:8px;
+color:white;
+font-weight:600;
+cursor:pointer;
+transition:.3s;
+}
+
+.btn:hover{
+transform:scale(1.05);
+}
+
+/* ---------- SECTIONS ---------- */
+section{
+padding:80px 10%;
+}
+
+h2{
+margin-bottom:20px;
+border-bottom:2px solid #30363d;
+display:inline-block;
+}
+
+/* ---------- GLASS CARD ---------- */
+.card{
+background:rgba(22,27,34,0.5);
+backdrop-filter:blur(10px);
+padding:25px;
+border-radius:14px;
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-8px);
+box-shadow:0 0 25px rgba(88,166,255,0.25);
+}
+
+/* ---------- SKILLS ---------- */
+.skills span{
+display:inline-block;
+margin:6px;
+padding:8px 14px;
+background:#161b22;
+border-radius:20px;
+}
+
+/* ---------- PROJECT GRID ---------- */
+.projects{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:25px;
+}
+
+/* ---------- FOOTER ---------- */
+footer{
+text-align:center;
+padding:30px;
+background:#161b22;
+color:#8b949e;
+}
+
+/* ---------- MOBILE ---------- */
+@media(max-width:768px){
+.hero h1{font-size:34px;}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav>
+<h3>Srajan</h3>
+<div>
+<a href="#about">About</a>
+<a href="#skills">Skills</a>
+<a href="#projects">Projects</a>
+<a href="#contact">Contact</a>
+</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+<h1>Hello, I'm Srajan 👋</h1>
+<h2 class="typing"></h2>
+
+<button class="btn" onclick="openResume()">
+⬇ View & Download Resume
+</button>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+<h2>About Me</h2>
+<div class="card">
+<p>
+Artificial Intelligence and Machine Learning undergraduate at BMS College of Engineering.
+Interested in Machine Learning, Computer Vision, and Secure System Design.
+I enjoy building real-world projects and continuously improving problem-solving skills through development and competitive programming.
+</p>
+</div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+<h2>Skills</h2>
+<div class="card skills">
+<span>Python</span>
+<span>Machine Learning</span>
+<span>OpenCV</span>
+<span>C</span>
+<span>Java</span>
+<span>HTML</span>
+<span>CSS</span>
+<span>JavaScript</span>
+<span>SQL</span>
+<span>MongoDB</span>
+<span>Git</span>
+</div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+<h2>Projects</h2>
+
+<div class="projects">
+
+<div class="card">
+<h3>🎵 Music Player</h3>
+<p>
+Responsive web music player with dynamic playback controls and real-time progress tracking using JavaScript Audio API.
+</p>
+<br>
+<a href="https://github.com/srajankumar1">GitHub →</a>
+</div>
+
+<div class="card">
+<h3>✏️ Pencil Sketch Converter</h3>
+<p>
+OpenCV-based image processing application converting images into realistic pencil sketches using Gaussian blur and image transformations.
+</p>
+<br>
+<a href="https://github.com/srajankumar1">GitHub →</a>
+</div>
+
+</div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+<h2>Contact</h2>
+<div class="card">
+<p>Email: srajan.ai24@bmsce.ac.in</p>
+<p>
+<a href="https://github.com/srajankumar1">GitHub</a> |
+<a href="https://linkedin.com">LinkedIn</a>
+</p>
+</div>
+</section>
+
+<footer>
+<p>© 2026 Srajan | Built with HTML, CSS & JavaScript</p>
+</footer>
+
+<!-- ---------- TYPING ANIMATION ---------- -->
+<script>
+
+const roles=[
+"AI & ML Student",
+"Machine Learning Enthusiast",
+"Full-Stack Developer",
+"Computer Vision Learner"
+];
+
+let i=0,j=0,current="",isDeleting=false;
+const typing=document.querySelector(".typing");
+
+function type(){
+current=roles[i];
+
+if(!isDeleting){
+typing.textContent=current.substring(0,j++);
+if(j>current.length){
+isDeleting=true;
+setTimeout(type,1200);
+return;
+}
+}else{
+typing.textContent=current.substring(0,j--);
+if(j===0){
+isDeleting=false;
+i=(i+1)%roles.length;
+}
+}
+setTimeout(type,isDeleting?40:80);
+}
+type();
+
+</script>
+
+<!-- ---------- RESUME PREVIEW + AUTO DOWNLOAD ---------- -->
+<script>
+
+function openResume(){
+
+const resumeURL="Srajan_1BM24AI167.pdf";
+
+/* Open preview */
+window.open(resumeURL,"_blank");
+
+/* Auto download */
+const link=document.createElement("a");
+link.href=resumeURL;
+link.download="Srajan_Resume.pdf";
+
+document.body.appendChild(link);
+
+setTimeout(()=>link.click(),800);
+
+document.body.removeChild(link);
+}
+
+</script>
+
+</body>
+</html>

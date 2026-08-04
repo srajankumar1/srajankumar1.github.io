@@ -47,7 +47,6 @@
 
       /* ============ Neural network canvas background ============ */
       #neuralCanvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-      #cursorGlow { position: fixed; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(380px circle at var(--x, 50%) var(--y, 20%), rgba(83,224,255,0.09), transparent 45%); opacity: 0.95; }
       .gradient-mesh {
         position: fixed; inset: -20%; z-index: 0; pointer-events: none; filter: blur(70px); opacity: .5;
         background:
@@ -70,14 +69,7 @@
       }
 
       .scroll-progress { position: fixed; top: 0; left: 0; height: 3px; width: 0%; z-index: 999; background: linear-gradient(90deg, var(--cyan), var(--blue)); box-shadow: 0 0 12px rgba(83,224,255,.8); }
-      @media (pointer: fine) {
-        body, a, button { cursor: none; }
-      }
-      .cursor-dot, .cursor-outline { position: fixed; top: 0; left: 0; border-radius: 50%; pointer-events: none; z-index: 998; transform: translate(-50%,-50%); }
-      .cursor-dot { width: 8px; height: 8px; background: var(--cyan); box-shadow: 0 0 10px rgba(83,224,255,.9); }
-      .cursor-outline { width: 36px; height: 36px; border: 1px solid rgba(83,224,255,.5); transition: width .25s var(--ease), height .25s var(--ease), border-color .25s var(--ease), background .25s var(--ease); }
-      .cursor-outline.hovering { width: 58px; height: 58px; background: rgba(83,224,255,.08); border-color: rgba(83,224,255,.9); }
-      @media (pointer: coarse) { .cursor-dot, .cursor-outline { display: none; } body, a, button { cursor: auto; } }
+      /* ============ Blend-mode spotlight cursor (disabled — using normal cursor) ============ */
 
       .site { position: relative; z-index: 1; }
       .container { width: min(var(--container), calc(100% - 32px)); margin: 0 auto; }
@@ -104,7 +96,7 @@
       .nav-actions { display: flex; align-items: center; gap: 12px; }
 
       /* ============ Magnetic buttons with arrow slide + ripple ============ */
-      .btn { position: relative; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 0; cursor: none; text-decoration: none; padding: 12px 18px; border-radius: 999px; color: var(--text); font-weight: 700; letter-spacing: .02em; background: linear-gradient(135deg, rgba(83,224,255,.18), rgba(92,124,255,.16)); border: 1px solid rgba(115,212,255,0.25); box-shadow: var(--glow); transition: transform .35s var(--ease-soft), box-shadow .45s var(--ease), background .45s var(--ease), border-color .45s var(--ease); will-change: transform; }
+      .btn { position: relative; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 0; cursor: pointer; text-decoration: none; padding: 12px 18px; border-radius: 999px; color: var(--text); font-weight: 700; letter-spacing: .02em; background: linear-gradient(135deg, rgba(83,224,255,.18), rgba(92,124,255,.16)); border: 1px solid rgba(115,212,255,0.25); box-shadow: var(--glow); transition: transform .35s var(--ease-soft), box-shadow .45s var(--ease), background .45s var(--ease), border-color .45s var(--ease); will-change: transform; }
       .btn:hover { border-color: rgba(83,224,255,.55); box-shadow: 0 0 28px rgba(83,224,255,.34), 0 0 60px rgba(92,124,255,.18); }
       .btn.primary { background: linear-gradient(135deg, rgba(83,224,255,.95), rgba(92,124,255,.9)); color: #04101b; }
       .btn .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,.5); transform: scale(0); animation: rippleAnim .6s ease-out forwards; pointer-events: none; }
@@ -265,9 +257,6 @@
     <div class="blur-circle bc3"></div>
     <div class="noise"></div>
     <canvas id="neuralCanvas" aria-hidden="true"></canvas>
-    <div id="cursorGlow"></div>
-    <div class="cursor-outline" id="cursorOutline"></div>
-    <div class="cursor-dot" id="cursorDot"></div>
     <div class="scroll-progress" id="scrollProgress"></div>
 
     <div class="loader" id="loader" aria-hidden="true">
@@ -667,36 +656,7 @@
       }, { threshold: 0.5 })
       sections.forEach(s => navObserver.observe(s))
 
-      /* ============ Custom cursor + spotlight ============ */
-      let targetX = window.innerWidth / 2, targetY = window.innerHeight * 0.2
-      let curX = targetX, curY = targetY
-      let dotX = targetX, dotY = targetY
-      const cursorDot = document.getElementById('cursorDot')
-      const cursorOutline = document.getElementById('cursorOutline')
-
-      window.addEventListener('mousemove', e => {
-        targetX = e.clientX
-        targetY = e.clientY
-      })
-      document.querySelectorAll('a, button, .card, .chip').forEach(el => {
-        el.addEventListener('mouseenter', () => cursorOutline.classList.add('hovering'))
-        el.addEventListener('mouseleave', () => cursorOutline.classList.remove('hovering'))
-      })
-
-      function animateCursor() {
-        curX += (targetX - curX) * 0.09
-        curY += (targetY - curY) * 0.09
-        dotX += (targetX - dotX) * 0.35
-        dotY += (targetY - dotY) * 0.35
-        document.documentElement.style.setProperty('--x', curX + 'px')
-        document.documentElement.style.setProperty('--y', curY + 'px')
-        cursorOutline.style.left = curX + 'px'
-        cursorOutline.style.top = curY + 'px'
-        cursorDot.style.left = dotX + 'px'
-        cursorDot.style.top = dotY + 'px'
-        requestAnimationFrame(animateCursor)
-      }
-      animateCursor()
+      /* Custom cursor removed — using the normal OS cursor */
 
       /* ============ Button ripple ============ */
       document.querySelectorAll('.btn').forEach(btn => {
@@ -772,9 +732,9 @@
 
       /* ============================================================
          Neural network background
-         - simplex-like smooth drifting motion (value-noise based)
-         - cursor acts as an AI node: nearby particles are attracted
-           with spring physics, temporary glowing links form
+         - nodes are permanently fixed at their home position (never move)
+         - only the edges react to the cursor: nearby nodes light up with
+           a glowing edge drawn to the cursor as it moves past them
          - retina aware, resizes responsively, pauses when tab hidden
          ============================================================ */
       ;(function neuralNetwork() {
@@ -793,49 +753,13 @@
 
         const mouse = { x: -9999, y: -9999, active: false }
 
-        // --- lightweight value-noise (smooth pseudo-random drift) ---
-        function makeNoise2D(seed) {
-          const perm = new Uint8Array(512)
-          let s = seed
-          function rand() { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296 }
-          const p = new Uint8Array(256)
-          for (let i = 0; i < 256; i++) p[i] = i
-          for (let i = 255; i > 0; i--) {
-            const j = Math.floor(rand() * (i + 1));
-            [p[i], p[j]] = [p[j], p[i]]
-          }
-          for (let i = 0; i < 512; i++) perm[i] = p[i & 255]
-          function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10) }
-          function lerp(a, b, t) { return a + t * (b - a) }
-          function grad(hash, x, y) {
-            const h = hash & 7
-            const gx = 1 - (h & 1) * 2
-            const gy = 1 - ((h >> 1) & 1) * 2
-            return (h < 4 ? gx * x : gy * y)
-          }
-          return function noise(x, y) {
-            const X = Math.floor(x) & 255, Y = Math.floor(y) & 255
-            const xf = x - Math.floor(x), yf = y - Math.floor(y)
-            const u = fade(xf), v = fade(yf)
-            const aa = perm[X + perm[Y]], ab = perm[X + perm[Y + 1]]
-            const ba = perm[X + 1 + perm[Y]], bb = perm[X + 1 + perm[Y + 1]]
-            const x1 = lerp(grad(aa, xf, yf), grad(ba, xf - 1, yf), u)
-            const x2 = lerp(grad(ab, xf, yf - 1), grad(bb, xf - 1, yf - 1), u)
-            return lerp(x1, x2, v)
-          }
-        }
-        const noiseX = makeNoise2D(7)
-        const noiseY = makeNoise2D(1337)
-
         function makeParticle() {
+          const x = Math.random() * w, y = Math.random() * h
           return {
-            x: Math.random() * w,
-            y: Math.random() * h,
+            x, y,
+            ox: x, oy: y, // fixed home position — the node never leaves this spot
             r: Math.random() * 3 + 1,
-            hue: Math.random() < 0.5 ? 'cyan' : 'blue',
-            nOff: Math.random() * 1000,
-            vx: 0, vy: 0,
-            baseSpeed: Math.random() * 0.35 + 0.12
+            hue: Math.random() < 0.5 ? 'cyan' : 'blue'
           }
         }
 
@@ -869,44 +793,10 @@
 
         const colorFor = (hue, alpha) => hue === 'cyan' ? `rgba(83,224,255,${alpha})` : `rgba(92,124,255,${alpha})`
 
-        let t = 0
         function step() {
-          t += 0.0028
           ctx.clearRect(0, 0, w, h)
-
-          for (let i = 0; i < particles.length; i++) {
-            const p = particles[i]
-
-            // smooth drifting motion from value noise
-            const nx = noiseX(p.nOff + t, t) 
-            const ny = noiseY(t, p.nOff + t)
-            p.vx += nx * 0.02
-            p.vy += ny * 0.02
-
-            // cursor attraction with spring easing, never snaps
-            if (mouse.active) {
-              const dx = mouse.x - p.x, dy = mouse.y - p.y
-              const dist = Math.hypot(dx, dy)
-              if (dist < CURSOR_RADIUS) {
-                const strength = (1 - dist / CURSOR_RADIUS) * 0.045
-                p.vx += dx * strength * 0.02
-                p.vy += dy * strength * 0.02
-              }
-            }
-
-            // damping keeps motion gentle and bounded
-            p.vx *= 0.94
-            p.vy *= 0.94
-            const speedCap = p.baseSpeed * 2.4
-            const sp = Math.hypot(p.vx, p.vy)
-            if (sp > speedCap) { p.vx = (p.vx / sp) * speedCap; p.vy = (p.vy / sp) * speedCap }
-
-            p.x += p.vx + nx * p.baseSpeed
-            p.y += p.vy + ny * p.baseSpeed
-
-            if (p.x < -20) p.x = w + 20; if (p.x > w + 20) p.x = -20
-            if (p.y < -20) p.y = h + 20; if (p.y > h + 20) p.y = -20
-          }
+          // nodes never move — they stay exactly at their home position (ox, oy).
+          // only the edges below react to the cursor.
 
           // connections between nearby particles
           for (let i = 0; i < particles.length; i++) {
@@ -921,7 +811,7 @@
                 ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke()
               }
             }
-            // glowing link from cursor to nearby particles
+            // glowing edge from cursor to nearby nodes — this is the part that tracks the cursor
             if (mouse.active) {
               const dx = p.x - mouse.x, dy = p.y - mouse.y
               const d = Math.hypot(dx, dy)
@@ -944,15 +834,6 @@
             ctx.fill()
           }
           ctx.shadowBlur = 0
-
-          // subtle radial glow around cursor
-          if (mouse.active) {
-            const grad = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, CURSOR_RADIUS)
-            grad.addColorStop(0, 'rgba(83,224,255,0.10)')
-            grad.addColorStop(1, 'rgba(83,224,255,0)')
-            ctx.fillStyle = grad
-            ctx.beginPath(); ctx.arc(mouse.x, mouse.y, CURSOR_RADIUS, 0, Math.PI * 2); ctx.fill()
-          }
 
           if (running) rafId = requestAnimationFrame(step)
         }
